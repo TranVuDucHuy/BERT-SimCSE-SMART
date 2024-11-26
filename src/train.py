@@ -9,6 +9,8 @@ from mbpp import MBPP
 from dataset import SST5_Dataset
 from model import BertClassifier
 
+from transformers import BertModel
+
 def train_epoch(model, dataloader, criterion, optimizer, device):
     model.train()
     train_loss = 0.0
@@ -76,7 +78,7 @@ def train(model, config):
     optimizer = torch.optim.Adam(model.parameters(), lr=config['lr'])
     criterion = torch.nn.CrossEntropyLoss()
     
-    best_model_path = f"{config['save_dir']}best_model_cls.pth"
+    best_model_path = config['best_cls_model']
 
     best_val_loss = float('inf')
     for epoch in range(config['num_epochs']):
@@ -90,8 +92,16 @@ def train(model, config):
 
     return model
 
+def load_simcse_model(model_path, num_labels):
+    model = BertClassifier(num_labels=num_labels)
+    model.load_state_dict(torch.load(model_path))
+    return model
+
 if __name__ == "__main__":
     config = load_config("config.yaml")
-    model = BertClassifier(num_labels=5).to(config['device'])
+    
+    bert = BertModel.from_pretrained('bert-base-uncased')
+    bert.load_state_dict(torch.load(config['best_cl_model']))   
+    model = BertClassifier(bert, num_labels=5).to(config['device'])
     model = train(model, config)
     print("Training finished!")

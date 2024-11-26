@@ -3,9 +3,9 @@ from transformers import BertModel
 
 
 class BertClassifier(nn.Module):
-    def __init__(self, num_labels):
+    def __init__(self, bert_model, num_labels):
         super(BertClassifier, self).__init__()
-        self.bert = BertModel.from_pretrained("bert-base-uncased")
+        self.bert = bert_model
         # self.bert = BertModel.from_pretrained(saved_model_path)
         
         # Frozen bert
