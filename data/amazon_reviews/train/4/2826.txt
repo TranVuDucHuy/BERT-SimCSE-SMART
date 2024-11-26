@@ -1,0 +1,1 @@
+This is not a GPS tracker and requires someone with a Samsung device nearby to receive the location. Location not real accurate but will get you close.

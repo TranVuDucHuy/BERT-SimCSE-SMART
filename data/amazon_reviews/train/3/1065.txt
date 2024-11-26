@@ -1,0 +1,1 @@
+It works, but the tv doesn't stay in a vertical position. The TV hangs slightly forwards, it won't fall, but its noticeable. I am using a 65" tv so it could work better for smaller TVs.

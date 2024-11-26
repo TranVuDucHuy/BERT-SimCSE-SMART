@@ -1,0 +1,1 @@
+Had terrible write performance, on par with UHS type 1 cards. Tried in camera via USB-C (Thunderbolt 4 cable) and in internal Macbook Pro reader with similar bad performance.This is either defective and/or a counterfeit in my opinion. Check your cards!

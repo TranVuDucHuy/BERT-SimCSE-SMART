@@ -1,0 +1,1 @@
+While the microphone worked it sounded great, but now, it gives a strange, high pitched feedback whenever used, and no amount of volume control can make it stop.

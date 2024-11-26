@@ -1,0 +1,1 @@
+I purchased for transferring data between my desktop and my 3d printer (Creality Ender 3 pro). The desktop had no problems, but the printer could not read the card. I'm sure the card was fine. It just didn't work for my application.

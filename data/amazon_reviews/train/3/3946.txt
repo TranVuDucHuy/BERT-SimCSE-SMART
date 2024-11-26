@@ -1,0 +1,1 @@
+Doesn't reach 120hz on my 4k OLED, only 63hz.

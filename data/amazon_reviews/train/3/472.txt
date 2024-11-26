@@ -1,0 +1,1 @@
+Test Bed:Apple M1 MAX with 32GB RAMLatest CFexpress Type-B-Card Reader USB 3.2 2x2 interface 20 Gbps high transfer speedSoftwares used: BlackMagic Design Disk Speed Test and Amorphous DiskMarkResult: You can see the Read speeds are nowhere close to the advertised speeds. I have given 3 star solely for the value of the money.

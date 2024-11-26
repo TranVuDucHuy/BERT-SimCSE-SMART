@@ -1,0 +1,1 @@
+The adapter worked well to display my iPhone screen on the TV via HDMI but completely failed to allow me to play streaming video from my iPhone to the TV. It would only play streaming audio to the TV. As soon as I disconnected the adapter the streaming video would display correctly on my iPhone.

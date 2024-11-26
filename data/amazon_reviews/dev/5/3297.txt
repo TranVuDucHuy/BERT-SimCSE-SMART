@@ -1,0 +1,1 @@
+At first I thought it didnt work, but when I actually looked to make sure I had the cable plugged into the thunderbolt port on my imac and not the USB C port, it worked perfectly. So glad it works!

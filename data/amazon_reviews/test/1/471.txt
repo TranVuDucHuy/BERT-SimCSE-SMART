@@ -1,0 +1,1 @@
+This Ethernet cable lessened the upload speed and the jitter speed increased by x8 from just using underwired wifi. Ethernet should never be a downgrade.

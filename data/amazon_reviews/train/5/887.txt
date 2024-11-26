@@ -1,0 +1,1 @@
+These were ordered to go inside Wyze Cam Pan v3s and are working as intended with no issues so far. There is no lag in the videos so the read and write speed for real time video recording and playback is sufficient for my needs.

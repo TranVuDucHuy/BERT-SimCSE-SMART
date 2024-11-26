@@ -1,0 +1,1 @@
+Every time I print a label, the label does not come out but instead rolls over on itself inside the labelmaker. I have to open it up, work out the crumpled mess, and then cut it. Checked and it is indeed the correct type for my label maker but for some reason it just doesn't work very well.

@@ -1,0 +1,1 @@
+This adapter only worked on my windows laptop. also, the connector was slow.

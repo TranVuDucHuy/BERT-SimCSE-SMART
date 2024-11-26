@@ -1,0 +1,1 @@
+It worked well at first, but after a day or two, it started only playing audio but no video. On some programs it didn't work at all. I downloaded their app and updated the software, and it started playing video again but it was very laggy.

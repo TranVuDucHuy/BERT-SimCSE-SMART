@@ -1,0 +1,1 @@
+Works with youtube and other apps, but on Amazon Prime it only displays the video without audio. Someone posted that audio would work with a 48 GBPS cable. I tried that, but still no audio.

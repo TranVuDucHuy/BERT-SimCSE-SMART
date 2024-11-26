@@ -1,0 +1,1 @@
+There's always an audio delay when playing video or even when adjusting the volume. And the volume setting doesn't always register so I can be at max volume on my phone and the speaker will be sitting in the middle somewhere. Kind of annoying.

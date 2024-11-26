@@ -1,0 +1,1 @@
+I tried it out with a thumb drive and it worked fine, but then I tried it with a corded Plantronics headset and it did not work at all. Computer could not detect the headset.

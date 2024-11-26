@@ -1,0 +1,1 @@
+ Cable that was sent only has 7 of the pairs working instead of 8 which limited the cable to 100mb instead of 1gb. It was also made very poorly and I might as well have made it myself. Look elsewhere

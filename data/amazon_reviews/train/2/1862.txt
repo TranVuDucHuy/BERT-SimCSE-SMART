@@ -1,0 +1,1 @@
+I've tested two data drives, one 2TB 5400RPM WD Green, and one 500GB 7200RPM Seagate Barracuda.While it feels like the players begin to spin, nothing else happens.Works on a DVD SATA drive though.The mentioned 2TB is empty and worrying via sata ports on the motherboard.

@@ -1,0 +1,1 @@
+New phones and tablets no longer have headphone jacks, instead relying on bluetooth. While this is fine for listening to music, it doesn't work with guitar apps and hardware. This solves that problem by providing a headphone jack while simultaneously allowing the USB C charging cable to be plugged in. sound quality is fine, works well.
