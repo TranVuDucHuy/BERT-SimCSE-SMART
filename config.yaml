@@ -1,0 +1,12 @@
+batch_size: 16          # Kích thước batch
+lr: 0.001               # Learning rate
+num_epochs: 5        # Số epoch huấn luyện
+save_dir: ".checkpoints/"  # Thư mục lưu mô hình
+device: "cuda"          # Thiết bị sử dụng, 'cuda' cho GPU, 'cpu' cho CPU
+
+train_path : "data\\trees\\train.txt" # Đường dẫn tới tập huấn luyện
+val_path : "data\\trees\\dev.txt" # Đường dẫn tới tập validation
+test_path : "data\\trees\\test.txt" # Đường dẫn tới tập kiểm thử
+
+best_cl_model : ".checkpoints/CLmodel.pth" 
+best_cls_model : ".checkpoints/CLSmodel.pth" 

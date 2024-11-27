@@ -1,0 +1,1 @@
+Keeps shutting down on 360 mode because it overheats

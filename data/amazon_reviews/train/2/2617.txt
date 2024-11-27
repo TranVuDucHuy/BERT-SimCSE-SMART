@@ -1,0 +1,1 @@
+Screen shares images and YouTube but whenever I try to play movies from any app, Chinese letters and QR code’s pop up and it says unable to play. But whenever it’s not connected it plays fine.

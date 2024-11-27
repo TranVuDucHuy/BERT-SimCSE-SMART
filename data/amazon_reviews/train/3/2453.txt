@@ -1,0 +1,1 @@
+It would charge the iPad when inline with just the usb cable, but once the line input was used it stopped receiving charging from the USB port.

@@ -1,0 +1,1 @@
+Right out of the box, the picture keeps blinking off for a second every 10 to 15 seconds. A hard, noticeable blink. Its not the HDMI source either as when going to another source or a source with no device attached, the menu also blinks. Serves me right for purchasing a good deal with very little review info out there.

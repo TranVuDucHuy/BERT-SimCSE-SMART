@@ -1,0 +1,1 @@
+Chargers do not charge at the fast rate if a normal usb-c charger

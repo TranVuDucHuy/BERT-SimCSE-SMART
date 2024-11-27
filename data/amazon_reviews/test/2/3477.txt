@@ -1,0 +1,1 @@
+So I got this rather quickly and did not realize it's not powered independently, tried to use it with several hdmi devices and could not get any to display a signal.

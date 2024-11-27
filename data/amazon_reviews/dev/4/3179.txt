@@ -1,0 +1,1 @@
+The detector works well. The sensitivity is high though, so it picks up anything that transmits a signal. I'd rather it pick up too much than not enough, but that's the reason for 4 stars instead of 5.

@@ -1,0 +1,1 @@
+The product worked once, but if you reconfigure USB ports, the drivers fail to adjust. The uninstall software continually failed. I had to boot in safe mode, manually delete folders and reboot several times to get my video working properly so I could install a better product. VERY DISAPPOINTING.

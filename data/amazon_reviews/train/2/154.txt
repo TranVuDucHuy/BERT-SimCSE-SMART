@@ -1,0 +1,1 @@
+It will detect my phone camera but it will not detect my RING doorbell camera even when RING doorbell camera is active.

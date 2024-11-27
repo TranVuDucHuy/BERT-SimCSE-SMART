@@ -1,0 +1,1 @@
+20w and 30w output only, will not do 50w on one port.

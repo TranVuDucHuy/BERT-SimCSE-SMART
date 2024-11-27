@@ -1,0 +1,1 @@
+After charging while still plugged in, it makes my MBPro 13,3 beep every25 seconds while apparently trying to dim the screen. Tried every setting to get it to stop to no avail.

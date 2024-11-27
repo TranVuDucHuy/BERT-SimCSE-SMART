@@ -1,0 +1,1 @@
+Window is supposed to be same size split between screens. Other laptop had similar resolution when I would plug in VGA cable. This one seems much smaller. Options exist for better resolution, but when selected, signal error messages appear and nothing but this terrible resolution works.

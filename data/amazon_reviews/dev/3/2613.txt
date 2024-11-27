@@ -1,0 +1,1 @@
+I bought one of these to test on my Tesla Model 3 splitting the USB port for Dashcam flash drive and phone dock charging.I can attest that it works in charging Samsung Galaxy Note 8 but I "feel" it doesn't charge as fast because there's no handshaking for the power connection. Someone would have to confirm with a usb power connection. Absolutely does not work on my iPhone 7.

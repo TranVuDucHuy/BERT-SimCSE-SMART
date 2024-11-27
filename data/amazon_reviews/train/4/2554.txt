@@ -1,0 +1,1 @@
+Works good until it overheats. Once the battery starts warming up pull it out. The video file will probably be corrupted. Stop and reshoot the video often to force it to make a new file just in case.

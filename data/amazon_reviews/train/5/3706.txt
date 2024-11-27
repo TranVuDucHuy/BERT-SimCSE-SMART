@@ -1,0 +1,1 @@
+Basically plug and play. Simple reliable solution as an alternative to a more expensive, less reliable USB hud to use a dual monitor setup.

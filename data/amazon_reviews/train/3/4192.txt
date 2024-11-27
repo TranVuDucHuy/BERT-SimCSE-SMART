@@ -1,0 +1,1 @@
+Despite light on external hard drive lighting up immediately, the cable needs lots of jiggling and re-plugging to get the computer to find the device.

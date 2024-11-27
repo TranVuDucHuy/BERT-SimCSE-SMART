@@ -1,0 +1,1 @@
+The locking mechanism at the top of the tripod does not tighten down properly. It's either too tight to loosen up or too loose where the phone moves when turned. If you have big thumbs, it's very hard to move.

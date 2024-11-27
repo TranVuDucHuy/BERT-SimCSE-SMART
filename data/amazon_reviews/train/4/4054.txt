@@ -1,0 +1,1 @@
+Always tilts downward, shouldn't do this it the goal is to protect it from camera body sounds. Update, reversed the mic through the mount and mostly solved the issue

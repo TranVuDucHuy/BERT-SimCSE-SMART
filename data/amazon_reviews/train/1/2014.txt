@@ -1,0 +1,1 @@
+Worked well for a few months, but now the pen will not turn off either by double tap or time out.

@@ -1,0 +1,1 @@
+Response time is too slow. Takes too long for live view and recordings don’t start immediately

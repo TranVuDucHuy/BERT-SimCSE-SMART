@@ -1,0 +1,1 @@
+Really bad video quality in even mediocre light at 60fps. Seems to be fine at 30fps, though.

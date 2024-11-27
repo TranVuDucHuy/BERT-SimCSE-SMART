@@ -1,0 +1,1 @@
+well remove noise for the interlocutor. If during a conversation via viber, skype, and so on, you get a call via the GSM network, the earphone turns off and you can connect it only after a reboot.

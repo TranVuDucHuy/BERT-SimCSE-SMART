@@ -1,0 +1,1 @@
+Ease of use and did what it was intended to do (adapt a a USB-A camera to a USB-C equipped Mac Mini).

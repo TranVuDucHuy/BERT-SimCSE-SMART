@@ -1,0 +1,1 @@
+Can't move left or right or up or down via app. So that's not good for being a high quality camera. At least give me left to right that would help. Plus you need a 802.3af Poe as this will not work with a 7 watt Poe as camera is 5 watt.

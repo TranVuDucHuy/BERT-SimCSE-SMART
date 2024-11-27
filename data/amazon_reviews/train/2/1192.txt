@@ -1,0 +1,1 @@
+I was not able to actually test these. When you plug them in, it triggers a dialog option as if you plugged in a flash drive. From it's onboard storage, you can run the installer, which is a custom binary from a Chinese manufacturer. As a cybersecurity guy who sometimes contracts with large organizations, this was more of a risk than I was comfortable with.

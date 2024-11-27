@@ -1,0 +1,1 @@
+I recently bought different brands of MicroSDXC. I think SanDisk is about an average SDXC card. However, the speed I tested is only about 90MB/s in reading but around 80MB/s for writing. It's a bit strange with what they claimed it to be.

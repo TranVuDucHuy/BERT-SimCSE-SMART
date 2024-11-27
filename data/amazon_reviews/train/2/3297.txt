@@ -1,0 +1,1 @@
+When a device is attached to the block to charge, it makes a weird sound as current goes thru and it can be heard far away, especially when the room is quiet.

@@ -1,0 +1,1 @@
+misleading name. This isn't an audio splitter it's a combiner. it has 2 inputs and 1 output not the other way around

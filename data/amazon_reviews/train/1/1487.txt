@@ -1,0 +1,1 @@
+For whatever reason, this does not work with some Macs. The light flickers on briefly, but the SD card inside does not work or isn't recognized. I tried it on a few Macs with Thunderbolt/USB-C ports. It worked on 1 out of 5. All were running the same OS, and known working SD cards were used in each.
