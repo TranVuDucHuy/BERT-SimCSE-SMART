@@ -11,11 +11,15 @@ from model import BertClassifier
 
 from transformers import BertModel
 
-def train_epoch(model, dataloader, criterion, optimizer, device):
+def train_epoch(model, dataloader, criterion, optimizer, device, pdg_config):
     model.train()
     train_loss = 0.0
+    
+    epsilon = pdg_config['epsilon']
+    eta = pdg_config['eta']
+    lambda_ = pdg_config['lambda_']    
 
-    pgd = AdversarialReg(model)
+    pgd = AdversarialReg(model, epsilon, lambda_, eta)
     mbpp = MBPP(model)
 
     for input_ids, attention_mask, labels in tqdm(dataloader, desc="Training"):
@@ -68,7 +72,7 @@ def eval_epoch(model, dataloader, criterion, device):
 
     return eval_loss, accuracy
 
-def train(model, config):
+def train(model, config, pdg_config):
     trainset = SST5_Dataset(config['train_path'])
     valset = SST5_Dataset(config['val_path'])
     
@@ -82,7 +86,7 @@ def train(model, config):
 
     best_val_loss = float('inf')
     for epoch in range(config['num_epochs']):
-        train_loss = train_epoch(model, train_loader, criterion, optimizer, config['device'])
+        train_loss = train_epoch(model, train_loader, criterion, optimizer, config['device'], pdg_config)
         val_loss, accuracy= eval_epoch(model, val_loader, criterion, config['device'])
 
         if val_loss < best_val_loss:
@@ -100,8 +104,10 @@ def load_simcse_model(model_path, num_labels):
 if __name__ == "__main__":
     config = load_config("config.yaml")
     
+    pdg_config = load_config("pgd_cf.yaml")
+    
     bert = BertModel.from_pretrained('bert-base-uncased')
     bert.load_state_dict(torch.load(config['best_cl_model']))   
     model = BertClassifier(bert, num_labels=5).to(config['device'])
-    model = train(model, config)
+    model = train(model, config, pdg_config)
     print("Training finished!")
