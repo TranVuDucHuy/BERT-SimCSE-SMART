@@ -12,13 +12,13 @@ from utils import read_file
 
 from utils import load_config
 
-# Train with SimCSE
+# Train with supervised contrastive learning
 def train_cl(model, config, criterion, cl_loss, trainset, epochs):
     train_loader = DataLoader(trainset, batch_size=16, shuffle=True, collate_fn=trainset.collate_fn)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)
     
-    path = config['best_cl_model']
+    path = config['best_supcl_model']
 
     for epoch in range(epochs):
         model.train()

@@ -4,7 +4,7 @@ from transformers import BertTokenizer
 import numpy as np
 from utils import canonicalize_text, read_file
 
-
+## Sentiment treebank dataset
 class SST5_Dataset(Dataset):
     def __init__(self, file_path):
         self.tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
@@ -35,6 +35,54 @@ class SST5_Dataset(Dataset):
         return input_ids, attention_mask, label
 
 
+## Amazon reviews dataset
+class Amazon_Dataset(Dataset):
+    def __init__(self, data, labels, tokenizer, max_length=512, is_training=True):
+        self.data = []
+        self.labels = []
+        for text, label in zip(data, labels):
+            # Canonicalize and tokenize the text
+            canonicalized_text = canonicalize_text(text)
+            tokens = tokenizer.tokenize(canonicalized_text)
+            
+            if is_training:
+                # Perform chunking for training data
+                chunks = [tokens[i:i + (max_length - 2)] for i in range(0, len(tokens), max_length - 2)]
+                for chunk in chunks:
+                    # Reconstruct text with special tokens
+                    chunk_text = tokenizer.convert_tokens_to_string(chunk)
+                    encoded_chunk = tokenizer(
+                        chunk_text,
+                        padding='max_length',
+                        max_length=max_length,
+                        truncation=True,
+                        return_tensors='pt'
+                    )
+                    self.data.append(encoded_chunk)
+                    self.labels.append(label)  # Assign the same label to all chunks of the same review
+            else:
+                # For non-training data, process without chunking
+                encoded_text = tokenizer(
+                    canonicalized_text,
+                    padding='max_length',
+                    max_length=max_length,
+                    truncation=True,
+                    return_tensors='pt'
+                )
+                self.data.append(encoded_text)
+                self.labels.append(label)
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, idx):
+        input_ids = self.data[idx]['input_ids'].squeeze()
+        attention_mask = self.data[idx]['attention_mask'].squeeze()
+        label = torch.tensor(self.labels[idx], dtype=torch.long)
+        return input_ids, attention_mask, label
+    
+    
+# Supervised contrastive learning dataset(NLI_format build from trainset)
 class NLI_Dataset(Dataset):
     def __init__(self, triples):
         self.triples = triples
@@ -110,4 +158,32 @@ class NLI_Dataset(Dataset):
 
         return batches
     
+    
+# Unsupervised contrastive learning dataset(wiki1m dataset after sampling)    
+class WikiDataset(Dataset):
+    def __init__(self, file_path, tokenizer, max_length=512):
+        self.data = []
+        with open(file_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                sentence = line.strip()
+                tokenized = tokenizer(
+                    sentence,
+                    add_special_tokens=True,
+                    max_length=max_length,
+                    padding="max_length",
+                    truncation=True,
+                    return_tensors="pt"
+                )
+                self.data.append(tokenized)
+
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, idx):
+        tokenized = self.data[idx]
+        input_ids = tokenized['input_ids'].squeeze(0) 
+        attention_mask = tokenized['attention_mask'].squeeze(0)
+        dummy_label = torch.tensor(-1, dtype=torch.long)
+        return input_ids, attention_mask, dummy_label
 

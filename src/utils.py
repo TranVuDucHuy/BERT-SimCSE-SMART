@@ -5,12 +5,13 @@ import unicodedata
 from tqdm import tqdm
 from transformers import BertTokenizer
 import yaml
+import os
 
-
+## Read Penn Treebank tree
 def read_ptb_tree(tree_string):
     return Tree.fromstring(tree_string)
 
-
+## Extract sentence and label from Penn Treebank tree
 def extract_sentence_and_label(tree):
     label = tree.label()
 
@@ -19,7 +20,7 @@ def extract_sentence_and_label(tree):
 
     return sentence, label
 
-
+## Read data from sst file
 def read_file(file_path):
     data = []
     with open(file_path, "r", encoding="utf-8") as file:
@@ -30,6 +31,7 @@ def read_file(file_path):
     return data
 
 
+## Group data by sentiment level for supervised contrastive learning
 def group_data_by_level(data):
     data_by_level = {}
 
@@ -44,7 +46,7 @@ def group_data_by_level(data):
 
     return data_by_level
 
-
+## Create large data pairs for supervised contrastive learning
 def create_large_data_pairs(data_by_level, target_size):
     pairs = []
     levels = list(data_by_level.keys())
@@ -73,7 +75,7 @@ def create_large_data_pairs(data_by_level, target_size):
 
     return pairs
 
-
+## Canonicalize text
 def canonicalize_text(text):
     text = re.sub(r"[\d\W_]+", " ", text)
 
@@ -87,7 +89,7 @@ def canonicalize_text(text):
 
     return text
 
-
+## Create triples for supervised contrastive learning
 def create_triples(pairs):
     triples = []
 
@@ -107,7 +109,34 @@ def create_triples(pairs):
 
     return triples
 
+## Read Amazon reviews
+def read_amazon_reviews(data_path):
+    data = {"train": {}, "dev": {}, "test": {}}
 
+    # Duyệt qua các thư mục chính: train, dev, test
+    for split in data.keys():
+        split_path = os.path.join(data_path, split)
+        sentiment_data = {}
+        
+        # Duyệt qua các thư mục con (1, 2, 3, 4, 5)
+        for sentiment_level in range(1, 6):
+            sentiment_path = os.path.join(split_path, str(sentiment_level))
+            reviews = []
+            
+            # Đọc tất cả các file .txt trong thư mục con
+            if os.path.exists(sentiment_path):
+                for file_name in os.listdir(sentiment_path):
+                    file_path = os.path.join(sentiment_path, file_name)
+                    if file_path.endswith(".txt"):
+                        with open(file_path, "r", encoding="utf-8") as f:
+                            reviews.append(f.read().strip())
+            
+            sentiment_data[sentiment_level - 1] = reviews
+        data[split] = sentiment_data
+
+    return data
+
+## Load configuration file
 def load_config(config_path):
     """
     Load configuration file in YAML format.

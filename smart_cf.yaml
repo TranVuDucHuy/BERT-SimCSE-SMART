@@ -1,0 +1,5 @@
+epsilon: 0.00001 # epsilon
+lambda_:  1 # regularization parameter
+eta: 0.00001 # learning rate
+sigma: 0.00001 # noise
+K: 1 # number of iterations

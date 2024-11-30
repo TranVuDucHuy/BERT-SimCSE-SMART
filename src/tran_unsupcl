@@ -1,0 +1,68 @@
+import torch
+import torch.nn.functional as F
+from torch.utils.data import DataLoader
+from tqdm import tqdm
+
+from dataset import WikiDataset
+from dataset import Amazon_Dataset
+from dataset import SST5_Dataset
+
+from transformers import BertModel
+
+from utils import read_file
+from utils import load_config
+
+
+# Train with unsupervised contrastive learning
+def train_uncl(model, trainset, batch_size, epochs, device, config):
+     train_loader = DataLoader(trainset, batch_size=batch_size, shuffle=True)
+
+     optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)
+     
+     path = config['best_unsupcl_model']
+
+     for epoch in range(epochs):
+         model.train()
+
+         train_loss = 0.0
+         for batch in tqdm(train_loader, desc=f"Training SimCSE ...:"):
+             b_ids, b_mask, *_ = batch
+
+             b_ids = b_ids.to(device)
+             b_mask = b_mask.to(device)
+
+             optimizer.zero_grad()
+
+             emb1 = model(b_ids, b_mask)
+             emb2 = model(b_ids, b_mask)
+
+             sim_matrix = F.cosine_similarity(emb1.unsqueeze(1), emb2.unsqueeze(0), dim=-1)
+             sim_matrix = sim_matrix / 0.05
+             labels_CL = torch.arange(b_ids.size(0)).long()
+             labels_CL = labels_CL.to(sim_matrix.device) 
+             
+             loss = F.cross_entropy(sim_matrix, labels_CL)
+                          
+             loss.backward()
+             optimizer.step()
+
+             train_loss += loss.item()
+
+         train_loss /= len(train_loader)
+
+         print(f"Epoch {epoch + 1}/{epochs}, Train Loss: {train_loss:.4f}")
+        
+     torch.save(model.state_dict(), path)   
+        
+     return model
+ 
+
+if __name__ == "__main__":
+    config = load_config()
+    
+    model = BertModel.from_pretrained('bert-base-uncased')
+    model = model.to(config['device'])
+    
+    
+    
+    trainset = read_file(config['train_data'])

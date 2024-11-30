@@ -8,6 +8,7 @@ import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from dataset import SST5_Dataset
+from dataset import Amazon_Dataset
 from model import BertClassifier
 
 from utils import load_config
@@ -89,12 +90,35 @@ def test_model(model_path, testset, device, batch_size=32):
     return metrics
 
 if __name__ == "__main__":
+    import argparse
+
+    # Load configurations
     config = load_config("config.yaml")
+
+    # Argument parser for dataset and model selection
+    parser = argparse.ArgumentParser(description="Choose dataset and model type for testing")
+    parser.add_argument('--dataset', type=str, choices=['sst5', 'amazon'], required=True, 
+                        help="Dataset to use for testing: 'sst5' or 'amazon'")
     
-    model_path = f"{config['save_dir']}best_model_cls.pth"
+    args = parser.parse_args()
     
+    # Load test dataset based on selection
+    if args.dataset == 'sst5':
+        testset = SST5_Dataset(config['sst_test_path'])
+    elif args.dataset == 'amazon':
+        testset = Amazon_Dataset(config['amazon_test_path'])
+    else:
+        raise ValueError("Invalid dataset choice. Please choose 'sst5' or 'amazon'.")
+
+    model_path = config['best_cls_model']
+
+    # Run the test function
     metrics = test_model(
-    model_path=model_path,
-    testset=SST5_Dataset(config['test_path']),
-    device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        model_path=model_path,
+        testset=testset,
+        device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     )
+
+    # Print the testing metrics
+    print("Testing finished!")
+    print(f"Metrics: {metrics}")

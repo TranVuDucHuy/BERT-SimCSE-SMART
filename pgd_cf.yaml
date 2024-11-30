@@ -1,3 +1,0 @@
-epsilon: 0.00001 # epsilon
-lambda_:  1 # regularization parameter
-eta: 0.001 # learning rate

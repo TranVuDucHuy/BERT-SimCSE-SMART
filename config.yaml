@@ -4,9 +4,19 @@ num_epochs: 5        # Số epoch huấn luyện
 save_dir: ".checkpoints/"  # Thư mục lưu mô hình
 device: "cuda"          # Thiết bị sử dụng, 'cuda' cho GPU, 'cpu' cho CPU
 
-train_path : "data\\trees\\train.txt" # Đường dẫn tới tập huấn luyện
-val_path : "data\\trees\\dev.txt" # Đường dẫn tới tập validation
-test_path : "data\\trees\\test.txt" # Đường dẫn tới tập kiểm thử
+# path to sst dataset
+sst_train_path : "data\\trees\\train.txt" # Đường dẫn tới tập huấn luyện
+sst_val_path : "data\\trees\\dev.txt" # Đường dẫn tới tập validation
+sst_test_path : "data\\trees\\test.txt" # Đường dẫn tới tập kiểm thử
 
-best_cl_model : ".checkpoints/CLmodel.pth" 
+# path to amazon dataset
+amazon_train_path : "data/amazon_reviews/train" # Đường dẫn tới tập huấn luyện
+amazon_val_path : "data/amazon_reviews/dev" # Đường dẫn tới tập validation
+amazon_test_path : "data/amazon_reviews/test" # Đường dẫn tới tập kiểm thử
+
+
+wiki_path : "data\sampled-wiki\\processed_sentences.txt"
+
+best_supcl_model : ".checkpoints/supCLmodel.pth" 
+best_unsupcl_model : ".checkpoints/unsupCLmodel.pth"
 best_cls_model : ".checkpoints/CLSmodel.pth" 
