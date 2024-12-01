@@ -1,13 +1,13 @@
 import torch
 import torch.nn.functional as F
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, ConcatDataset
 from tqdm import tqdm
 
 from dataset import WikiDataset
 from dataset import Amazon_Dataset
 from dataset import SST5_Dataset
 
-from transformers import BertModel
+from transformers import BertModel, BertTokenizer, AutoTokenizer
 
 from utils import read_file
 from utils import load_config
@@ -56,13 +56,39 @@ def train_uncl(model, trainset, batch_size, epochs, device, config):
         
      return model
  
+def create_wiki_dataset(config):
+    wiki_path = config['wiki_path']
+    tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+    
+    wiki_dataset = WikiDataset(wiki_path, tokenizer)     
+    return wiki_dataset
+ 
 
 if __name__ == "__main__":
+    import argparse
+
     config = load_config()
     
     model = BertModel.from_pretrained('bert-base-uncased')
     model = model.to(config['device'])
     
+    wiki_dataset = create_wiki_dataset(config)
     
+    parser = argparse.ArgumentParser(description="Choose dataset type")
+    parser.add_argument('--dataset', type=str, choices=['sst5', 'amazon'], required=True,
+                        help="Dataset to use: 'sst5' or 'amazon'")
+    args = parser.parse_args()
     
-    trainset = read_file(config['train_data'])
+    if args.dataset == 'sst5':
+        train_path = config['sst_train_path']
+        
+        trainset = SST5_Dataset(train_path)
+    else:
+        train_path = config['amazon_train_path']
+        
+        trainset = Amazon_Dataset(train_path)
+    
+    # Concatenate wiki dataset with train dataset for unsupervised contrastive learning
+    unsup_dataset = ConcatDataset([wiki_dataset, trainset])
+    
+    model = train_uncl(model, unsup_dataset, config['batch_size'], config['epochs'], config['device'], config)
