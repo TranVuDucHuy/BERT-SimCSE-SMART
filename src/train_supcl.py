@@ -9,16 +9,17 @@ from utils import create_triples
 from utils import create_large_data_pairs
 from utils import group_data_by_level
 from utils import read_file
+from utils import read_amazon_reviews
 
 from utils import load_config
 
-# Train with SimCSE
+# Train with supervised contrastive learning
 def train_cl(model, config, criterion, cl_loss, trainset, epochs):
     train_loader = DataLoader(trainset, batch_size=16, shuffle=True, collate_fn=trainset.collate_fn)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)
     
-    path = config['best_cl_model']
+    path = config['best_supcl_model']
 
     for epoch in range(epochs):
         model.train()
@@ -52,16 +53,41 @@ def train_cl(model, config, criterion, cl_loss, trainset, epochs):
     return model
 
 if __name__ == "__main__":
+    import argparse
+    
     config = load_config("config.yaml")
     
     model = BertModel.from_pretrained('bert-base-uncased')
     model.to(config['device'])
     
-    train_data = read_file(config['train_path'])
-    data_by_level = group_data_by_level(train_data)
-
-    target_size = 300000
-    pairs = create_large_data_pairs(data_by_level, target_size)
+    parser = argparse.ArgumentParser(description="Choose dataset type")
+    parser.add_argument('--dataset', type=str, choices=['sst5', 'amazon'], required=True,
+                        help="Dataset to use: 'sst5' or 'amazon'")
+    args = parser.parse_args()
+    
+    if args.dataset == "sst5":
+        train_path = config['sst_train_path']
+        
+        # read data from sst file
+        train_data = read_file(train_path)
+        
+        # group data by level
+        data_by_level = group_data_by_level(train_data)
+        
+        # create large data pairs
+        target_size = 300000
+        pairs = create_large_data_pairs(data_by_level, target_size)
+    else:
+        train_path = config['amazon_train_path']
+        
+        # read data from amazon file
+        amazon_data = read_amazon_reviews(train_path)
+        
+        data_by_level = amazon_data['train']
+        
+        # create large data pairs
+        target_size = 30000
+        pairs = create_large_data_pairs(data_by_level, target_size)
     
     nli_data = create_triples(pairs)
     NLI_dataset = NLI_Dataset(nli_data)

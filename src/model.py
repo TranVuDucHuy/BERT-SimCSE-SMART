@@ -9,15 +9,15 @@ class BertClassifier(nn.Module):
         # self.bert = BertModel.from_pretrained(saved_model_path)
         
         # Frozen bert
-        self.bert.requires_grad_(False)
+        #self.bert.requires_grad_(False)
 
         self.dropout = nn.Dropout(0.1)
         self.classifier = nn.Sequential(
-            nn.Linear(768, 256),
+            nn.Linear(768, 512),
             nn.ReLU(),
-            nn.BatchNorm1d(256),
-            nn.Dropout(0.5),
-            nn.Linear(256, num_labels),
+            nn.BatchNorm1d(512),
+            nn.Dropout(0.1),
+            nn.Linear(512, num_labels),
         )
 
     def forward(self, input_ids, attention_mask):

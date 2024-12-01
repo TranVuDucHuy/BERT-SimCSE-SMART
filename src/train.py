@@ -7,9 +7,12 @@ from utils import load_config
 from adversarial import AdversarialReg
 from mbpp import MBPP
 from dataset import SST5_Dataset
+from dataset import Amazon_Dataset
 from model import BertClassifier
 
 from transformers import BertModel
+
+from torch.cuda.amp import GradScaler, autocast
 
 def train_epoch(model, dataloader, criterion, optimizer, device, pdg_config):
     model.train()
@@ -18,27 +21,39 @@ def train_epoch(model, dataloader, criterion, optimizer, device, pdg_config):
     epsilon = pdg_config['epsilon']
     eta = pdg_config['eta']
     lambda_ = pdg_config['lambda_']    
+    sigma = pdg_config['sigma']
+    K = pdg_config['K']
+    
+    scaler = GradScaler()
 
-    pgd = AdversarialReg(model, epsilon, lambda_, eta)
+    pgd = AdversarialReg(model, epsilon, lambda_, eta, sigma, K)
     mbpp = MBPP(model)
 
     for input_ids, attention_mask, labels in tqdm(dataloader, desc="Training"):
         input_ids, attention_mask, labels = input_ids.to(device), attention_mask.to(device), labels.to(device)
 
         optimizer.zero_grad()
-        logits = model(input_ids, attention_mask)
-        loss = criterion(logits, labels)
-        loss.backward(retain_graph=True)
-
-        adv_loss = pgd.max_loss_reg((input_ids, attention_mask), logits)
-        adv_loss.backward(retain_graph=True)
-
-        breg_div = mbpp.bregman_divergence((input_ids, attention_mask), logits)
-        breg_div.backward()
-
-        optimizer.step()
         
-        train_loss += loss.item()
+        with autocast():
+            outputs = model(input_ids, attention_mask=attention_mask)
+            loss = criterion(outputs, labels)
+        scaler.scale(loss).backward(retain_graph=True)
+
+        # Backpropagation cho adversarial loss
+        with autocast():
+            adv_loss = pgd.max_loss_reg((input_ids, attention_mask), outputs)
+        scaler.scale(adv_loss).backward(retain_graph=True)
+
+        # Backpropagation cho Bregman divergence
+        with autocast():
+            breg_div = mbpp.bregman_divergence((input_ids, attention_mask), outputs)
+        scaler.scale(breg_div).backward()
+
+        scaler.step(optimizer)  # Thay thế optimizer.step()
+        scaler.update() 
+        # optimizer.step()
+        mbpp.apply_momentum(model.named_parameters())
+        total_loss += loss.item()
 
     train_loss /= len(dataloader)
 
@@ -72,10 +87,7 @@ def eval_epoch(model, dataloader, criterion, device):
 
     return eval_loss, accuracy
 
-def train(model, config, pdg_config):
-    trainset = SST5_Dataset(config['train_path'])
-    valset = SST5_Dataset(config['val_path'])
-    
+def train(model, trainset, valset, config, pdg_config):
     train_loader = DataLoader(trainset, batch_size=config['batch_size'], shuffle=True)
     val_loader = DataLoader(valset, batch_size=config['batch_size'], shuffle=False)
 
@@ -102,12 +114,42 @@ def load_simcse_model(model_path, num_labels):
     return model
 
 if __name__ == "__main__":
+    import argparse
+
+    # Load configurations
     config = load_config("config.yaml")
-    
     pdg_config = load_config("pgd_cf.yaml")
-    
+
+    # Argument parser for dataset and model selection
+    parser = argparse.ArgumentParser(description="Choose dataset and model type")
+    parser.add_argument('--dataset', type=str, choices=['sst5', 'amazon'], required=True, 
+                        help="Dataset to use: 'sst5' or 'amazon'")
+    parser.add_argument('--model_type', type=str, choices=['supcl', 'unsupcl'], required=True, 
+                        help="Model type to use: 'supcl' (supervised) or 'unsupcl' (unsupervised)")
+    args = parser.parse_args()
+
+    # Load BERT model and weights
     bert = BertModel.from_pretrained('bert-base-uncased')
-    bert.load_state_dict(torch.load(config['best_cl_model']))   
+    if args.model_type == 'supcl':
+        bert.load_state_dict(torch.load(config['best_supcl_model']))
+    elif args.model_type == 'unsupcl':
+        bert.load_state_dict(torch.load(config['best_unsupcl_model']))
+    else:
+        raise ValueError("Invalid model type choice. Please choose 'supcl' or 'unsupcl'.")
+
+    # Wrap BERT in classifier and move to device
     model = BertClassifier(bert, num_labels=5).to(config['device'])
-    model = train(model, config, pdg_config)
+
+    # Load datasets based on selection
+    if args.dataset == 'sst5':
+        trainset = SST5_Dataset(config['sst_train_path'])
+        valset = SST5_Dataset(config['sst_val_path'])
+    elif args.dataset == 'amazon':
+        trainset = Amazon_Dataset(config['amazon_train_path'])
+        valset = Amazon_Dataset(config['amazon_val_path'])
+    else:
+        raise ValueError("Invalid dataset choice. Please choose 'sst5' or 'amazon'.")
+
+    # Train the model
+    model = train(model, trainset, valset, config, pdg_config)
     print("Training finished!")
