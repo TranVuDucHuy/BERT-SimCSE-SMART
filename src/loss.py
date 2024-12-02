@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-
+## Supervied contrastive loss
 def supCL_loss(criterion, anchor, pos, neg, new_w=0, temper=0.05):
     cos = nn.CosineSimilarity(dim=-1)
     pos_sim = cos(anchor.unsqueeze(1), pos.unsqueeze(0)) / temper
