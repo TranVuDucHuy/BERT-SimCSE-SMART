@@ -1,14 +1,14 @@
 import torch
 import torch.nn.functional as F
 
-
+## Source code from : https://github.com/jelc53/nlp-minibert
 class AdversarialReg(object):
     def __init__(
         self,
         model,
         epsilon: float = 1e-5,
-        lambda_: float = 5,
-        eta: float = 1e-3,
+        lambda_: float = 1,
+        eta: float = 1e-5,
         sigma: float = 1e-5,
         K: int = 1,
     ):

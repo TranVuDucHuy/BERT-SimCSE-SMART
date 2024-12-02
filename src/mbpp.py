@@ -1,6 +1,7 @@
 import torch
 import torch.nn.functional as F
 
+# Source code from : https://github.com/jelc53/nlp-minibert
 
 # Định nghĩa lớp momentum Bregman proximal point để tránh tham số bị cập nhật quá mức
 class MBPP(object):
