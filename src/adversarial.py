@@ -114,18 +114,15 @@ class AdversarialReg(object):
         else:
             return (p * (rp - ry) * 2).sum()
 
-    def max_loss_reg(self, batch, emb_name):  # embedding or embedding.
+    # Tính toán loss
+    def max_loss_reg(self, batch, emb_name): 
         emb_name = "embedding"
-        # print(emb_name, type(emb_name))
         input_ids, attention_mask = batch
-        self.model.eval()  # chuyển model sang chế độ đánh giá, tắt dropout
-
-        logits = self.model(input_ids, attention_mask)  # tính toán f ban đầu
-        # print(logits, type(logits))
+        self.model.eval()                              # chuyển model sang chế độ đánh giá, tắt dropout
+        logits = self.model(input_ids, attention_mask) # tính toán f ban đầu
 
         self.save_gradients()
         self.save_embeddings(emb_name)
-
         self.generate_noise(emb_name)
 
         for _ in range(self.K):
@@ -133,8 +130,7 @@ class AdversarialReg(object):
 
             adv_logits = self.model(
                 input_ids, attention_mask
-            )  # Tính toán f sau khi có thêm nhiễu
-            # print(adv_logits, type(adv_logits))
+            )                                           # tính toán f sau khi có thêm nhiễu
             adv_loss = self.symmetric_kl(adv_logits, logits)
 
             adv_loss.backward()
@@ -144,7 +140,7 @@ class AdversarialReg(object):
 
         adv_logits = self.model(
             input_ids, attention_mask
-        )  # model_prediction(self.model, batch, task_name)
+        )
         adv_loss = self.symmetric_kl(adv_logits, logits.detach())
 
         self.restore_embeddings(emb_name)
