@@ -9,7 +9,7 @@ class MBPP(object):
         self.model = model
         self.beta = beta
         self.mu = mu
-        self.theta_state = {}  # lưu trữ giá trị của tham số tại từng bước cập nhật
+        self.theta_state = {}                      # lưu trữ giá trị của tham số tại từng bước cập nhật
 
         # Cập nhật theta_0 bằng tham số model sau khi pre-trained
         for name, param in self.model.named_parameters():
@@ -25,29 +25,24 @@ class MBPP(object):
     # Tính D_Breg
     def bregman_divergence(self, batch, logits):
         input_ids, attention_mask = batch
-        # chuyển logits thành xác suất cho từng lớp bằng softmax
-        theta_prob = F.softmax(logits, dim=-1)
-
-        # sao lưu tham số hiện tại của mô hình (param.data) vào param_bak
-        # thay thế bằng tham số lưu ở theta_state để tính toán mà k mất tham số gốc
+        theta_prob = F.softmax(logits, dim=-1)      # chuyển logits thành xác suất cho từng lớp bằng softmax
+        
         param_bak = {}
         for name, param in self.model.named_parameters():
-            param_bak[name] = param.data.clone()
-            param.data = self.theta_state[name]
+            param_bak[name] = param.data.clone()    # sao lưu tham số hiện tại của mô hình (param.data) vào param_bak
+            param.data = self.theta_state[name]     # thay thế bằng tham số lưu ở theta_state để tính toán mà không mất tham số gốc
 
         with torch.no_grad():
             logits = self.model(
                 input_ids, attention_mask
-            )  # model_prediction(self.model, batch, taskname)
+            ) 
             theta_til_prob = F.softmax(logits, dim=-1).detach()
 
-        # khôi phục lại tham số
+        # Khôi phục lại tham số
         for name, param in self.model.named_parameters():
             param.data = param_bak[name]
 
-        # torch.cuda.empty_cache()
-
-        # Tính toán
+        # Tính toán loss
         l_s = F.kl_div(
             theta_prob.log(), theta_til_prob, reduction="batchmean"
         ) + F.kl_div(theta_til_prob.log(), theta_prob, reduction="batchmean")
