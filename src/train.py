@@ -9,6 +9,7 @@ from mbpp import MBPP
 from dataset import SST5_Dataset
 from dataset import Amazon_Dataset
 from model import BertClassifier
+from model import UnSup_BERT
 
 from transformers import BertModel
 
@@ -133,6 +134,7 @@ if __name__ == "__main__":
     if args.model_type == 'supcl':
         bert.load_state_dict(torch.load(config['best_supcl_model']))
     elif args.model_type == 'unsupcl':
+        bert = UnSup_BERT(bert, is_unsup_train=False)
         bert.load_state_dict(torch.load(config['best_unsupcl_model']))
     else:
         raise ValueError("Invalid model type choice. Please choose 'supcl' or 'unsupcl'.")
