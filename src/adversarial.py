@@ -2,6 +2,7 @@ import torch
 import torch.nn.functional as F
 
 ## Source code from : https://github.com/jelc53/nlp-minibert
+
 class AdversarialReg(object):
     def __init__(
         self,
@@ -12,47 +13,47 @@ class AdversarialReg(object):
         sigma: float = 1e-5,
         K: int = 1,
     ):
-        # gọi hàm khởi tạo của lớp cha
-        super(AdversarialReg, self).__init__()
-        self.embed_backup = (
+        
+        super(AdversarialReg, self).__init__()    # gọi hàm khởi tạo của lớp cha
+        self.embed_backup = (                     # từ điển lưu trữ các tham số embedding ban đầu (sau cần khôi phục)
             {}
-        )  # từ điển lưu trữ các tham số embedding ban đầu (sau cần khôi phục)
-        self.grad_backup = (
+        )  
+        self.grad_backup = (                      # từ điển lưu trữ các gradient ban đầu (sau khôi phục được)
             {}
-        )  # từ điển lưu trữ các gradient ban đầu (sau khôi phục được)
+        ) 
         self.model = model
-        self.epsilon = epsilon  # mức độ thay đổi các tham số
-        self.lambda_ = lambda_  # hệ số điều chỉnh tính toán hàm mất mát
-        self.eta = eta  # learning rate
-        self.sigma = sigma  # độ mạnh của noise được thêm vào
-        self.K = K  # iterations
+        self.epsilon = epsilon                     # mức độ thay đổi các tham số
+        self.lambda_ = lambda_                     # hệ số điều chỉnh tính toán hàm mất mát
+        self.eta = eta                             # learning rate
+        self.sigma = sigma                         # độ mạnh của noise được thêm vào
+        self.K = K                                 # iterations
 
     # Lưu các gradient được dùng tính toán (để sau khôi phục lại)
     def save_gradients(self):
         for name, param in self.model.named_parameters():
             if (
                 param.requires_grad
-            ):  # kiểm tra param có được tính toán trong backpropagation k
-                if param.grad == None:  # chưa được tính toán
+            ):                                      # kiểm tra param có được tính toán trong backpropagation không
+                if param.grad == None:              # chưa được tính toán
                     self.grad_backup[name] = None
                 else:
                     self.grad_backup[name] = param.grad.clone()
 
-    # lọc những tham số tgia tính toán là emb_name và lưu lại
+    # Lọc những tham số tham gia tính toán là emb_name và lưu lại
     def save_embeddings(self, emb_name):
         # print(emb_name, type(emb_name))
         for name, param in self.model.named_parameters():
             if param.requires_grad and emb_name in name:
                 self.embed_backup[name] = param.data.clone()
 
-    # khôi phục các gradient tính toán
+    # Khôi phục các gradient tính toán
     def restore_gradient(self):
         for name, param in self.model.named_parameters():
             if param.requires_grad:
-                assert name in self.grad_backup  # đảm bảo tham số tồn tại
-                param.grad = self.grad_backup[name]  # khôi phục giá trị
+                assert name in self.grad_backup        # đảm bảo tham số tồn tại
+                param.grad = self.grad_backup[name]    # khôi phục giá trị
 
-    # khôi phục những tham số tính toán emb_name
+    # Khôi phục những tham số tính toán emb_name
     def restore_embeddings(self, emb_name):
 
         for name, param in self.model.named_parameters():
@@ -61,20 +62,20 @@ class AdversarialReg(object):
                 param.data = self.embed_backup[name]
         self.embed_backup = {}
 
-    # thêm nhiễu vào các tham số
+    # Thêm nhiễu vào các tham số
     def generate_noise(self, emb_name):
         for name, param in self.model.named_parameters():
             if param.requires_grad and emb_name in name:
                 noise = param.data.new(param.size()).normal_(0, 1) * self.sigma
                 param.data.add_(noise)
 
-    # điều chỉnh tham số nhúng sau khi bị change mà đảm bảo không vượt quá ngưỡng xđ vởi epsilon
+    # Điều chỉnh tham số nhúng sau khi bị thay đổi mà đảm bảo không vượt quá ngưỡng xác định vởi epsilon
     def project(self, param_name, param_data):
         change = param_data - self.embed_backup[param_name]
         change = torch.clamp(change, min=-self.epsilon, max=self.epsilon)
         return self.embed_backup[param_name] + change
 
-    # điều chỉnh tham số nhúng theo hướng gradient ascent (not GD)
+    # Điều chỉnh tham số nhúng theo hướng gradient ascent (not GD)
     def emb_ascent(self, emb_name):
         for name, param in self.model.named_parameters():
             if param.requires_grad and emb_name in name:
